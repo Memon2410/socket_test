@@ -149,7 +149,7 @@
                     TweenMax.delayedCall(0.2, removeListener);
                 });
 
-                window.addEventListener("devicemotion", processMotion);
+                addListener();
             
                 function processMotion(event) {
                     var accelerationX = Math.floor(event.accelerationIncludingGravity.x * 50);
@@ -159,9 +159,12 @@
                     socket.emit('event', { message: accelerationX + ',' + accelerationY + ',' + accelerationZ });
                 }
 
+                function addListener() {
+                    window.addEventListener("devicemotion", processMotion);
+                }
                 function removeListener() {
-                    TweenMax.delayedCall(5, reload);
                     window.removeEventListener("devicemotion", processMotion);
+                    TweenMax.delayedCall(5, addListener);
                 }
                 // End Socket [Client | Server]
             } else {
@@ -179,12 +182,15 @@
                     TweenMax.to($('.ball'), 0, {x:strX, y:strY, z:strZ});
 
                     if(data.message == "shoot") {
-                        TweenMax.to($('.ball'), 0.2, {backgroundColor:'rgba(255,0,0,0.8)', scaleX:0.3, scaleY: 0.3, ease:Power2.easeOut});
+                        TweenMax.to($('.ball'), 0.2, {scaleX:0.3, scaleY: 0.3, ease:Power2.easeOut});
                     } else {
                         TweenMax.delayedCall(5, reload);
                     }
                 });
                 // End Socket [Server | Client]
+                function reload() {
+                    TweenMax.to($('.ball'), 0.2, {scaleX:1, scaleY:1, ease:Power2.easeOut});
+                }
             }
         };
 
@@ -195,11 +201,6 @@
         function randomInt(min,max) {
             return Math.floor(Math.random()*(max-min+1)+min);
         }
-        // INIT AGAIN
-        function reload() {
-            history.go(0)
-        }
-        
 
     </script>
 </body>
